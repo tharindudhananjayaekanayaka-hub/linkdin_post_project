@@ -38,8 +38,8 @@ tools_list = [search_tool] if search_tool else []
 # 3. Agents නිර්මාණය කිරීම
 researcher = Agent(
     role='Expert Technology Researcher',
-    goal='{topic} සම්බන්ධයෙන් පසුගිය දින 7 තුළ සිදු වූ වැදගත්ම තාක්ෂණික පුවත් 3ක් සොයා ගැනීම.',
-    backstory="ඔබ තාක්ෂණික පුවත් විශ්ලේෂණය කරන ප්‍රවීණයෙකි. විශ්වාසදායක මූලාශ්‍ර පමණක් භාවිතා කරයි.",
+    goal='Find the 3 most important technology news stories from the past 7 days related to {topic}.',
+    backstory="You are a skilled professional who analyzes technology news. You only use reliable and trustworthy sources.",
     tools=tools_list,
     llm=llm,
     verbose=True,
@@ -49,8 +49,8 @@ researcher = Agent(
 
 writer = Agent(
     role='Expert LinkedIn Content Strategist',
-    goal='Research Agent ලබාදෙන දත්ත ඇසුරෙන් {language} භාෂාවෙන් ආකර්ෂණීය LinkedIn post එකක් නිර්මාණය කිරීම.',
-    backstory="ඔබ තාක්ෂණික කරුණු ඉතා සරලව, කරුණු සහිතව සහ වෘත්තීය මට්ටමින් ලිවීමට දක්ෂය.",
+    goal='Create an engaging LinkedIn post in {language} based on the data provided by the Research Agent.',
+    backstory="You are skilled at writing technical content in a simple, informative, and professional manner.",
     llm=llm,
     verbose=True,
     allow_delegation=False
@@ -58,37 +58,36 @@ writer = Agent(
 
 visual_artist = Agent(
     role='Visual Content Creator',
-    goal='පෝස්ට් එකට ගැළපෙන පරිදි AI image එකක් සෑදීමට අවශ්‍ය ඉංග්‍රීසි prompt එකක් නිර්මාණය කිරීම.',
-    backstory="ඔබ ඩිජිටල් කලාව පිළිබඳ ප්‍රවීණයෙකි. ඉතා විස්තරාත්මක image prompt එකක් සැකසීමට ඔබ දක්ෂය.",
+    goal='Create an English prompt to generate an AI image that matches the LinkedIn post.',
+    backstory="You are an expert in digital art and highly skilled at crafting detailed image prompts.",
     llm=llm,
     verbose=True,
     allow_delegation=False
 )
 
-# 4. Tasks නිර්මාණය කිරීම
+# 4. Creating Tasks
 research_task = Task(
-    description="{topic} ක්ෂේත්‍රයේ පසුගිය සතියේ සිදු වූ වෙනස්කම් 3ක් සොයාගෙන සාරාංශයක් ලබා දෙන්න.",
-    expected_output="සතියේ වැදගත්ම කරුණු 3ක තාක්ෂණික සාරාංශයක්.",
+    description="{topic} Identify 3 key developments that occurred in the past week in this field and provide a summary.",
+    expected_output="A technical summary of the 3 most important updates of the week.",
     agent=researcher
 )
 
 writer_task = Task(
     description=(
-        "1. Research Agent ලබාදුන් තොරතුරු අධ්‍යයනය කරන්න.\n"
-        "2. එම කරුණු ඇසුරෙන් ආකර්ෂණීය LinkedIn post එකක් {language} භාෂාවෙන් ලියන්න.\n"
-        "3. Bullet points, Emojis සහ Hashtags භාවිතා කරන්න.\n"
-        "4. අවසානයට Call to Action එකක් ඇතුළත් කරන්න."
+        "1. Review the information provided by the Research Agent.\n"
+        "2. Based on those insights, write an engaging LinkedIn post in {language}.\n"
+        "3. Use bullet points, emojis, and hashtags.\n"
+        "4. Include a call to action at the end."
     ),
     expected_output="A complete LinkedIn post in {language}.",
     agent=writer
 )
 
 image_task = Task(
-    description="ලියන ලද පෝස්ට් එකට ගැළපෙන පරිදි, AI එකකට ලබා දිය හැකි එක ඡේදයක ඉංග්‍රීසි image prompt එකක් පමණක් ලියන්න.",
+    description="Write only a single-paragraph English image prompt that can be given to an AI, matching the created post.",
     expected_output="A highly detailed single-paragraph image prompt in English.",
     agent=visual_artist
 )
-
 # 5. Free Image URL Generator
 def generate_free_image_url(prompt):
     encoded_prompt = urllib.parse.quote(prompt)
