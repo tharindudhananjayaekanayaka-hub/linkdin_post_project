@@ -1,0 +1,8 @@
+# Backend Dependencies
+fastapi
+uvicorn
+pydantic
+python-dotenv
+crewai
+crewai_tools
+litellm
